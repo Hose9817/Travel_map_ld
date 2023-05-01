@@ -1,0 +1,105 @@
+/* body{
+    position: relative;
+} */
+
+.card {
+    width: 250px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+}
+
+label {
+    margin: 3px 0;
+    width: max-content;
+    color: rgb(101, 18, 3);
+    border-bottom: .5px solid rgb(153, 45, 45);
+    font-size: 13px;
+
+}
+
+.desc {
+    font-size: 15px;
+}
+
+.star {
+    color: gold
+}
+
+.username {
+    font-size: 14px;
+}
+
+.date {
+    font-size: 12px
+}
+
+.infoBlock {
+    display: flex;
+    flex-direction: column;
+}
+
+form {
+    width: 250px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+input,
+textarea {
+    border: none;
+    border-bottom: 1.5px solid rgb(196, 191, 191);
+}
+
+input::placeholder,
+textarea::placeholder {
+    font-size: 12px;
+    color: rgb(196, 193, 193)
+}
+
+.submitButton {
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    color: white;
+    background-color: tomato;
+    cursor: pointer;
+}
+
+.buttons,
+.logout {
+    top: 0;
+    right: 0;
+    position: absolute;
+}
+
+.button {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.logout {
+    background-color: tomato;
+}
+
+.login {
+    background-color: teal;
+
+}
+
+.register {
+    background-color: slateblue;
+
+} 
+
+.mapboxgl-ctrl-top-right {
+    margin-top: 35px;
+}
