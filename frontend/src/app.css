@@ -5,10 +5,11 @@
 .card {
     width: 250px;
     height: 250px;
+    padding: 5px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-
+    background-color: rgb(159, 159, 167);
 }
 
 label {

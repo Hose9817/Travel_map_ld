@@ -120,9 +120,8 @@ function App() {
       // fadeDuration={3000}
       >
 
-
-          <NavigationControl />
-          <GeolocateControl />
+        <NavigationControl />
+        <GeolocateControl />
 
 
         {pins.map(p =>
