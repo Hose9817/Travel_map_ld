@@ -6,11 +6,16 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './app.css';
 import { format } from "timeago.js"
 
+// import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+// import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+
 import Register from './components/Register';
 import Login from './components/Login';
 import AddInfo from './components/AddInfo';
+import GeocoderControl from './components/GeocoderControl';
 
-function App() {
+
+function App(props) {
 
   const myStorage = window.localStorage;
   const [currentUser, setCurrentUser] = useState(myStorage.getItem("user"));
@@ -59,16 +64,6 @@ function App() {
     getPins();
   }, []);
 
-  // useEffect(() => {
-  //   const map = mapRef.current.getMap();
-  //   map.addControl(
-  //     new MapboxDirections({
-  //       accessToken: mapboxgl.accessToken
-  //     }),
-  //     'top-left'
-  //   );
-  // }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPin = {
@@ -104,24 +99,22 @@ function App() {
     }
   }
 
-
   return (
     <div className='App'>
       <Map
         {...viewport}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX}
+
         style={{ width: '100vw', height: '100vh', }}
-        mapStyle="mapbox://styles/saibabdulla/clh22d6bb00lt01p6hlsl819u"
-        //initial style: mapbox://styles/saibabdulla/clftdx4h200n001mxdioqadhy
+        mapStyle="mapbox://styles/saibabdulla/clftdx4h200n001mxdioqadhy"
         onDblClick={handleAddClick}
-        // onViewportChange={(viewport) => setViewport(viewport)}
         onMove={evt => setViewport(evt.viewport)}
-      // transitionDuration="1000"
-      // fadeDuration={3000}
       >
 
-        <NavigationControl />
-        <GeolocateControl />
+        <NavigationControl position='bottom-right' />
+        <GeolocateControl position='bottom-right' />
+
+        <GeocoderControl mapboxAccessToken={process.env.REACT_APP_MAPBOX} position="top-left" />
 
 
         {pins.map(p =>
