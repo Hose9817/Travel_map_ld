@@ -2,8 +2,10 @@ import { Room, Cancel } from '@mui/icons-material';
 import './register.css';
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 export default function Register({setShowRegister}) {
+    const { t } = useTranslation();
     const [success, setSuccess] = useState(false);
     const [failure, setFailure] = useState(false);
     const nameRef = useRef();
@@ -38,7 +40,7 @@ export default function Register({setShowRegister}) {
                 <input type="text" placeholder='username' ref={nameRef} />
                 <input type="email" placeholder='email' ref={emailRef} />
                 <input type="password" placeholder='password' ref={passwordRef} />
-                <button className='registerBtn'>Register</button>
+                <button className='registerBtn'>{t('register')}</button>
                 {success && (<span className='success'>Successfull. You can login now!</span>)}
                 {failure && (<span className='failure'>Something went wrong!</span>)}
             </form>
