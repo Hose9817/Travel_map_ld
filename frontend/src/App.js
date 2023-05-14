@@ -6,14 +6,38 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './app.css';
 import { format } from "timeago.js"
 
-// import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-// import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-
 import Register from './components/Register';
 import Login from './components/Login';
 import AddInfo from './components/AddInfo';
 import GeocoderControl from './components/GeocoderControl';
 
+import { I18nextProvider } from 'react-i18next';
+import i18n from 'i18next';
+import { useTranslation } from 'react-i18next';
+import { initReactI18next } from 'react-i18next';
+
+i18n.use(initReactI18next).init({
+  interpolation: { escapeValue: false }, // Необходимо для корректного отображения HTML-тегов в переводах
+  lng: 'en', // Язык по умолчанию
+  resources: {
+    en: {
+      translation: {
+        // Переводы на английском
+        "register": "Register",
+        "login": "Login",
+        "logout": "Logout"
+      }
+    },
+    ru: {
+      translation: {
+        // Переводы на русском
+        "register": "Регистрация",
+        "login": "Вход",
+        "logout": "Выход"
+      }
+    }
+  }
+});
 
 function App(props) {
 
@@ -33,6 +57,8 @@ function App(props) {
     zoom: 5,
   })
 
+  const { t } = useTranslation();
+
   const handleMarkerClick = (id, lat, long) => {
     setCurrentPlaceId(id);
     setViewport({
@@ -44,7 +70,6 @@ function App(props) {
   }
 
   const handleAddClick = (e) => {
-    console.log('Hello bratan!!!');
     const { lat: latitude, lng: longtude } = e.lngLat;
     setNewPlace({
       long: longtude,
@@ -99,126 +124,135 @@ function App(props) {
     }
   }
 
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    // console.log('Languages changed');
+  };
+
   return (
-    <div className='App'>
-      <Map
-        {...viewport}
-        mapboxAccessToken={process.env.REACT_APP_MAPBOX}
+    <I18nextProvider i18n={i18n}>
+      <div className='App'>
+        <Map
+          {...viewport}
+          mapboxAccessToken={process.env.REACT_APP_MAPBOX}
 
-        style={{ width: '100vw', height: '100vh', }}
-        mapStyle="mapbox://styles/saibabdulla/clftdx4h200n001mxdioqadhy"
-        onDblClick={handleAddClick}
-        onMove={evt => setViewport(evt.viewport)}
-      >
+          style={{ width: '100vw', height: '100vh', }}
+          mapStyle="mapbox://styles/saibabdulla/clftdx4h200n001mxdioqadhy"
+          onDblClick={handleAddClick}
+          onMove={evt => setViewport(evt.viewport)}
+        >
 
-        <NavigationControl position='bottom-right' />
-        <GeolocateControl position='bottom-right' />
+          <NavigationControl position='bottom-right' />
+          <GeolocateControl position='bottom-right' />
 
-        <GeocoderControl mapboxAccessToken={process.env.REACT_APP_MAPBOX} position="top-left" />
+          <GeocoderControl mapboxAccessToken={process.env.REACT_APP_MAPBOX} position="top-left" />
 
-
-        {pins.map(p =>
-          <React.Fragment key={p._id}>
-            <Marker
-              longitude={p.long}
-              latitude={p.lat}
-              anchor="bottom"
-            >
-              <Place
-                style={{
-                  fontSize: "50px",
-                  color: p.username === currentUser ? 'maroon' : 'purple',
-                  cursor: 'pointer'
-                }}
-                onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
-              />
-            </Marker>
-            {currentPlaceId === p._id && (
-              <Popup
+          {pins.map(p =>
+            <React.Fragment key={p._id}>
+              <Marker
                 longitude={p.long}
                 latitude={p.lat}
-                closeButton={true}
-                closeOnClick={false}
-                anchor="left"
-                onClose={() => setCurrentPlaceId(null)}
+                anchor="bottom"
               >
-                <div className="card">
-                  <label >Place:</label>
-                  <h4 className="Place">{p.title}</h4>
-                  <label >Review:</label>
-                  <p className='desc'>{p.desc}</p>
-                  <label >Rating:</label>
-                  <div className="stars">
-                    {Array(p.rating).fill(<Star className="star" />)}
-                  </div>
-                  <label >Information: </label>
-                  <div className="infoBlock">
-                    <span className="username">Created by <b>{p.username}</b></span>
-                    <span className="date">{format(p.createdAt)}</span>
-                  </div>
-                  <button onClick={() => removePin(p._id)}>Delete</button>
-                </div>
-                <AddInfo pin={p} pins={pins} setPins={setPins} setNewPlace={setNewPlace} />
-              </Popup>
-            )}
-          </React.Fragment>
-        )}
-
-        {newPlace &&
-          <Popup
-            longitude={newPlace.long}
-            latitude={newPlace.lat}
-            closeButton={true}
-            closeOnClick={false}
-            anchor="left"
-            onClose={() => setNewPlace(null)}
-          >
-            <div>
-              <form onSubmit={handleSubmit}>
-                <label>Title</label>
-                <input
-                  type="text"
-                  placeholder='Enter a title'
-                  onChange={(e) => setTitle(e.target.value)}
+                <Place
+                  style={{
+                    fontSize: "50px",
+                    color: p.username === currentUser ? 'maroon' : 'purple',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
                 />
-                <label>Review</label>
-                <textarea
-                  placeholder='Say us something about this place'
-                  onChange={(e) => setDesc(e.target.value)}
-                ></textarea>
-                <label>Rating</label>
-                <select onChange={(e) => setRating(e.target.value)}>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
-                <button className='submitButton' type="submit">Add Pin</button>
-              </form>
-            </div>
-          </Popup>
-        }
+              </Marker>
+              {currentPlaceId === p._id && (
+                <Popup
+                  longitude={p.long}
+                  latitude={p.lat}
+                  closeButton={true}
+                  closeOnClick={false}
+                  anchor="left"
+                  onClose={() => setCurrentPlaceId(null)}
+                >
+                  <div className="card">
+                    <label >Place:</label>
+                    <h4 className="Place">{p.title}</h4>
+                    <label >Review:</label>
+                    <p className='desc'>{p.desc}</p>
+                    <label >Rating:</label>
+                    <div className="stars">
+                      {Array(p.rating).fill(<Star className="star" />)}
+                    </div>
+                    <label >Information: </label>
+                    <div className="infoBlock">
+                      <span className="username">Created by <b>{p.username}</b></span>
+                      <span className="date">{format(p.createdAt)}</span>
+                    </div>
+                    <button onClick={() => removePin(p._id)}>Delete</button>
+                  </div>
+                  <AddInfo pin={p} pins={pins} setPins={setPins} setNewPlace={setNewPlace} />
+                </Popup>
+              )}
+            </React.Fragment>
+          )}
 
-        {currentUser ?
-          (<button className="button logout" onClick={handleLogout}>Log out</button>)
-          :
-          (<div className='buttons'>
-            <button className="button login" onClick={() => setShowLogin(true)}>Login</button>
-            <button className="button register" onClick={() => setShowRegister(true)}>Register</button>
-          </div>)
-        }
+          {newPlace &&
+            <Popup
+              longitude={newPlace.long}
+              latitude={newPlace.lat}
+              closeButton={true}
+              closeOnClick={false}
+              anchor="left"
+              onClose={() => setNewPlace(null)}
+            >
+              <div>
+                <form onSubmit={handleSubmit}>
+                  <label>Title</label>
+                  <input
+                    type="text"
+                    placeholder='Enter a title'
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                  <label>Review</label>
+                  <textarea
+                    placeholder='Say us something about this place'
+                    onChange={(e) => setDesc(e.target.value)}
+                  ></textarea>
+                  <label>Rating</label>
+                  <select onChange={(e) => setRating(e.target.value)}>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                  <button className='submitButton' type="submit">Add Pin</button>
+                </form>
+              </div>
+            </Popup>
+          }
 
-        {showRegister && <Register setShowRegister={setShowRegister} />}
-        {showLogin && <Login
-          setShowLogin={setShowLogin}
-          myStorage={myStorage}
-          setCurrentUser={setCurrentUser}
-        />}
+          {currentUser ?
+            (<button className="button logout" onClick={handleLogout}>{t('logout')}</button>)
+            :
+            (<div className='buttons'>
+              <button className="button login" onClick={() => setShowLogin(true)}>{t('login')}</button>
+              <button className="button register" onClick={() => setShowRegister(true)}>{t('register')}</button>
+            </div>)
+          }
 
+          <div className='localBtns'>
+            <button onClick={() => changeLanguage('en')}>EN</button>
+            <button onClick={() => changeLanguage('ru')}>RU</button>
+          </div>
 
-      </Map>
-    </div>
+          {showRegister && <Register setShowRegister={setShowRegister} />}
+          {showLogin && <Login
+            setShowLogin={setShowLogin}
+            myStorage={myStorage}
+            setCurrentUser={setCurrentUser}
+          />}
+        </Map>
+      </div>
+    </I18nextProvider>
   );
 }
 

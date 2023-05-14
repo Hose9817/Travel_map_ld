@@ -24,7 +24,7 @@ export default function Login({setShowLogin, myStorage, setCurrentUser}) {
             console.log(err);
             setFailure(true);
         }
-
+        
     }
 
     return (
